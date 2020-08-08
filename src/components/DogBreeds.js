@@ -32,7 +32,7 @@ const DogBreeds = () => {
   };
 
   return (<div>
-    {errorMessage ? <p>{errorMessage}</p> : null}
+    {errorMessage ? <p data-testid="error">{errorMessage}</p> : null}
     <button onClick={handleFetchBreeds}>{isLoading ? "Loading..." : "Get dog breeds"}</button>
     <button onClick={handleClearBreeds}>Clear</button>
     {renderBreeds()}

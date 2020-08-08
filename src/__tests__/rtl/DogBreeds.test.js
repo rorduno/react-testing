@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitForElement } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import DogBreeds from "./../../components/DogBreeds";
 import DogBreed from "./../../components/DogBreed";
 import { fetchDogBreeds } from "./../../api";
@@ -9,17 +9,17 @@ jest.mock("./../../api");
 
 describe("DogBreeds", () => {
 
-    let utils, buttons, fetchBtn, clearBtn;
+    let buttons, fetchBtn, clearBtn;
     beforeEach(() => {
-        utils = render(<DogBreeds />);
-        buttons = utils.queryAllByRole("button");
+        render(<DogBreeds />);
+        buttons = screen.queryAllByRole("button");
         fetchBtn = buttons[0]
         clearBtn = buttons[1];
     });
 
     it("renders with deafult values", () => {
 
-        const errorMessage = utils.container.querySelector("p");
+        const errorMessage = screen.queryByTestId("error")
 
         expect(errorMessage).toEqual(null);
         expect(fetchBtn).not.toEqual(null);
@@ -39,21 +39,18 @@ describe("DogBreeds", () => {
         expect(fetchBtn).toHaveTextContent("Loading...");
         expect(fetchDogBreeds).toHaveBeenCalled();
 
-        fetchBtn = await waitForElement(() =>
-            utils.getByText("Get dog breeds")
-        );
-        let doggies = await waitForElement(() =>
-            utils.container.querySelectorAll("p")
-        );
+        fetchBtn = await screen.findByText("Get dog breeds");
+
+        let doggies = await screen.findAllByText("doggy");
 
         expect(doggies.length).toEqual(2);
         expect(fetchBtn).toHaveTextContent("Get dog breeds");
 
         fireEvent.click(clearBtn);
 
-        doggies = utils.container.querySelectorAll("p")
-
-        expect(doggies.length).toEqual(0);
+        doggies = screen.queryAllByText("doggy");
+        expect(doggies).toEqual([]);
+    
     });
 
     it("fires off unsuccessful request, populates errorMessage, and clears screen when button clear is clicked", async () => {
@@ -65,26 +62,19 @@ describe("DogBreeds", () => {
         expect(fetchBtn).toHaveTextContent("Loading...");
         expect(fetchDogBreeds).toHaveBeenCalled();
 
-        fetchBtn = await waitForElement(() =>
-            utils.getByText("Get dog breeds")
-        );
+        fetchBtn = await screen.findByText("Get dog breeds");
 
-        let tags = await waitForElement(() =>
-            utils.container.querySelectorAll("p")
-        );
+        let errorMessage = await screen.findByText("oops!");
 
-        expect(tags.length).toEqual(1);
-
-        const errorMessage = tags[0];
-
-        expect(errorMessage).toHaveTextContent("oops!");
+        expect(errorMessage).toBeInTheDocument();
+        expect(errorMessage.tagName).toEqual("P");
         expect(fetchBtn).toHaveTextContent("Get dog breeds");
 
         fireEvent.click(clearBtn);
 
-        tags = utils.container.querySelectorAll("p")
+        errorMessage = screen.queryByText("oops!");
 
-        expect(tags.length).toEqual(0);        
+        expect(errorMessage).toEqual(null);
     });
 
 });

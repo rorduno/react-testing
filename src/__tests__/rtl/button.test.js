@@ -1,21 +1,21 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import Button from "./../../components/Button";
 
-let utils, btn;
+let btn;
 beforeEach(()=>{
-   utils  = render(<Button />);
-   btn = utils.queryByRole("button"); // query returns null if not present
+   render(<Button />);
+   btn = screen.getByRole("button");
 });
 
 test('renders with default values', () => {
   expect(btn).not.toEqual(null);
-  expect(utils.getByText("Count is 0")).toBeInTheDocument();
+  expect(screen.getByText("Count is 0")).toBeInTheDocument();
   });
 
 test('increments counter by one', () => {
   
   fireEvent.click(btn);
 
-  expect(utils.getByText("Count is 1")).toBeInTheDocument();
+  expect(screen.getByText("Count is 1")).toBeInTheDocument();
 });

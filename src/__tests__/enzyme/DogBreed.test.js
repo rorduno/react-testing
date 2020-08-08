@@ -9,4 +9,5 @@ test('renders with default values', () => {
 
     expect(tag.length).toEqual(1); // element exists
     expect(tag.text()).toEqual("chihuahua"); // element has expected data
+    expect(tag.hasClass("important-class")).toEqual(true); // element has expected class
 });

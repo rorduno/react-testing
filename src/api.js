@@ -1,13 +1,11 @@
 const fetchDogBreeds = async () => {
+    try {
+        const response = await fetch("https://dog.ceo/api/breeds/list/all");
+        return await response.json();
 
-    const response = await fetch("https://dog.ceo/api/breeds/list/all");
-    const data = await response.json();
-
-    if (data && "success" === data.status) {
-        return data;
+    } catch (error) {
+        return { errorMessage: "An error has occured :(" };
     }
-
-    return { errorMessage: "An error has occured :(" };
 };
 
 export { fetchDogBreeds };

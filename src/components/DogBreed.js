@@ -1,5 +1,5 @@
 import React from "react"
 
 export default ({breed}) =>{
-    return <p>{breed}</p>;
+    return <p className="important-class">{breed}</p>;
 };
