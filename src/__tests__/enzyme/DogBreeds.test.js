@@ -41,13 +41,13 @@ describe("DogBreeds", () => {
         fetchDogBreeds.mockReturnValueOnce(Promise.resolve({ message: { dingo: [], husky: [] } }));
 
         fetchBtn.simulate("click");
-        
+
         buttons = wrapper.find("button");
         fetchBtn = buttons.at(0);
         expect(fetchBtn.text()).toEqual("Loading...");
 
         await runAllPromises()
-        
+
         // after waiting for all the promises to be exhausted
         // we can do our UI check
         wrapper.update()
@@ -58,7 +58,7 @@ describe("DogBreeds", () => {
 
         buttons = wrapper.find("button");
         fetchBtn = buttons.at(0);
-        
+
         expect(fetchBtn.text()).toEqual("Get dog breeds");
         expect(fetchDogBreeds).toHaveBeenCalled();
 
@@ -66,12 +66,41 @@ describe("DogBreeds", () => {
 
         doggies = wrapper.find(DogBreed);
 
-        expect(doggies.length).toEqual(0);        
+        expect(doggies.length).toEqual(0);
 
     });
 
     it("fires off unsuccessful request, populates errorMessage, and clears screen when button clear is clicked", async () => {
 
+        fetchDogBreeds.mockReturnValueOnce(Promise.resolve({ errorMessage: "oops!" }));
+
+        fetchBtn.simulate("click");
+
+        await runAllPromises()
+
+        // after waiting for all the promises to be exhausted
+        // we can do our UI check
+        wrapper.update()
+
+        let doggies = wrapper.find(DogBreed);
+
+        expect(doggies.length).toEqual(0);
+        
+        const errorMessage = wrapper.find("p");
+        expect(errorMessage.text()).toEqual("oops!");
+
+        buttons = wrapper.find("button");
+        fetchBtn = buttons.at(0);
+
+        expect(fetchBtn.text()).toEqual("Get dog breeds");
+        expect(fetchDogBreeds).toHaveBeenCalled();
+
+        clearBtn.simulate("click");
+
+        doggies = wrapper.find(DogBreed);
+
+        expect(doggies.length).toEqual(0);
+        expect(errorMessage.text()).toEqual("oops!");
     });
 
 });
